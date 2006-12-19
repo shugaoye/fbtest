@@ -1,7 +1,7 @@
 
 TOPDIR = ..
 
-O_TARGET = drawops.o
+A_TARGET = drawops.a
 
 include $(TOPDIR)/Rules.make
 

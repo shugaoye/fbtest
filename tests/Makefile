@@ -1,7 +1,7 @@
 
 TOPDIR = ..
 
-O_TARGET = tests.o
+A_TARGET = tests.a
 
 include $(TOPDIR)/Rules.make
 

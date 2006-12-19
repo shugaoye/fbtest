@@ -1,6 +1,5 @@
 
 CC = $(CROSS_COMPILE)gcc
-LD = $(CROSS_COMPILE)ld
 HOSTCC = gcc
 
 IFLAGS = -I$(TOPDIR)/include
@@ -16,7 +15,7 @@ HDRS += $(wildcard $(TOPDIR)/include/*.h)
 .PHONY:		all all_rec clean clean_rec
 
 
-all:		.depend all_rec $(TARGET) $(O_TARGET) $(HOST_TARGET)
+all:		.depend all_rec $(TARGET) $(A_TARGET) $(HOST_TARGET)
 
 all_rec:
 ifdef SUBDIRS
@@ -26,15 +25,15 @@ endif
 $(TARGET):	$(OBJS)
 		$(CC) -o $(TARGET) $(filter $(OBJS), $^) $(LIBS)
 
-$(O_TARGET):	$(OBJS)
-		$(LD) -r -o $(O_TARGET) $(filter $(OBJS), $^)
+$(A_TARGET):	$(OBJS)
+		$(AR) -rcs $(A_TARGET) $(OBJS)
 
 $(HOST_TARGET):	$(SRCS)
 		$(HOSTCC) -o $(HOST_TARGET) $(CFLAGS) $(SRCS) $(LIBS)
 
 
 clean::		clean_rec
-		$(RM) $(TARGET) $(HOST_TARGET) $(OBJS) .depend
+		$(RM) $(TARGET) $(A_TARGET) $(HOST_TARGET) $(OBJS) .depend
 
 clean_rec:
 ifdef SUBDIRS

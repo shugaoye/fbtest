@@ -1,7 +1,7 @@
 
 TOPDIR = ..
 
-O_TARGET = fonts.o
+A_TARGET = fonts.a
 
 include $(TOPDIR)/Rules.make
 

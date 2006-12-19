@@ -1,7 +1,7 @@
 
 TOPDIR = ..
 
-O_TARGET = images.o
+A_TARGET = images.a
 
 SRCS += penguin.c
 

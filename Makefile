@@ -3,10 +3,10 @@ TOPDIR = .
 
 TARGET = $(CROSS_COMPILE)fbtest
 
-OBJS += drawops/drawops.o fonts/fonts.o images/images.o visops/visops.o \
-	tests/tests.o
-
 SUBDIRS = drawops pnmtohex fonts images visops tests
+
+LIBS += tests/tests.a drawops/drawops.a fonts/fonts.a images/images.a \
+	visops/visops.a
 
 include $(TOPDIR)/Rules.make
 

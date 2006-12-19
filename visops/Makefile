@@ -1,7 +1,7 @@
 
 TOPDIR = ..
 
-O_TARGET = visops.o
+A_TARGET = visops.a
 
 include $(TOPDIR)/Rules.make
 
