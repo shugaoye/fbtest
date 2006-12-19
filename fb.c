@@ -276,9 +276,9 @@ static void var_validate(void)
     do {								\
 	if (fb_var.x != old->x) {					\
 	    if (error == -1)						\
-		Error(#x "changed from %u to %u\n", old->x, fb_var.x);	\
+		Error(#x " changed from %u to %u\n", old->x, fb_var.x);	\
 	    else							\
-		Warning(#x "changed from %u to %u\n", old->x, fb_var.x);\
+		Warning(#x " changed from %u to %u\n", old->x, fb_var.x);\
 	}								\
     } while (0)
 
