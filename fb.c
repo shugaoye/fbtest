@@ -35,6 +35,7 @@ struct fb_cmap fb_cmap;
 
 static unsigned long fb_start;
 static u32 fb_len, fb_offset;
+static void *fb_addr;
 u8 *fb;
 
 
@@ -178,18 +179,25 @@ int fb_set_cmap(void)
 
 void fb_map(void)
 {
-    caddr_t addr;
+    long page_size;
+    unsigned long page_mask;
 
     Debug("fb_map()\n");
-    fb_start = (unsigned long)fb_fix.smem_start & PAGE_MASK;
-    fb_offset = (unsigned long)fb_fix.smem_start & ~PAGE_MASK;
-    fb_len = (fb_offset+fb_fix.smem_len+~PAGE_MASK) & PAGE_MASK;
+
+    page_size = sysconf(_SC_PAGESIZE);
+    if (page_size == -1)
+	Fatal("Cannot obtain page size: %s\n", strerror(errno));
+
+    page_mask = ~(page_size-1);
+    fb_start = (unsigned long)fb_fix.smem_start & page_mask;
+    fb_offset = (unsigned long)fb_fix.smem_start & ~page_mask;
+    fb_len = (fb_offset+fb_fix.smem_len+~page_mask) & page_mask;
     Debug("fb_start = %lx, fb_offset = %x, fb_len = %x\n", fb_start, fb_offset,
 	  fb_len);
-    addr = mmap(NULL, fb_len, PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd, 0);
-    if (addr == (caddr_t)-1)
+    fb_addr = mmap(NULL, fb_len, PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd, 0);
+    if (fb_addr == MAP_FAILED)
 	Fatal("mmap smem: %s\n", strerror(errno));
-    fb = addr+fb_offset;
+    fb = fb_addr+fb_offset;
 }
 
 
@@ -200,7 +208,7 @@ void fb_map(void)
 void fb_unmap(void)
 {
     Debug("fb_unmap()\n");
-    if (munmap((caddr_t)((unsigned long)fb & PAGE_MASK), fb_len) == -1)
+    if (munmap(fb_addr, fb_len) == -1)
 	Fatal("munmap smem: %s\n", strerror(errno));
 }
 
