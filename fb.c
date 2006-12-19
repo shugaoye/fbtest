@@ -394,7 +394,7 @@ static void var_fix_validate(void)
 #define ALLOC_AND_SAVE_COMPONENT(name)					\
     do {								\
 	if (!(saved_ ## name = malloc(fb_cmap.len*sizeof(u16))))	\
-	    Fatal("malloc %d: %s\n", fb_cmap.len*sizeof(u16),		\
+	    Fatal("malloc %zu: %s\n", fb_cmap.len*sizeof(u16),		\
 		  strerror(errno));					\
 	memcpy(saved_ ## name, fb_cmap.name, fb_cmap.len*sizeof(u16));	\
     } while (0)
