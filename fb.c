@@ -239,8 +239,8 @@ void fb_restore(void)
 
 void fb_clear(void)
 {
-    int size = fb_fix.smem_len/sizeof(u32);
-    u32 *p = (u32 *)fb;
+    u32 size = fb_fix.smem_len/sizeof(unsigned long);
+    unsigned long *p = (unsigned long *)fb;
 
     Debug("fb_clear()\n");
     while (size--)
