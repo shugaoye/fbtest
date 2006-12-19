@@ -297,6 +297,8 @@ static void var_validate(void)
 
 static void var_validate_change(const struct fb_var_screeninfo *old, int error)
 {
+    unsigned int i;
+
     CHECK_CHANGE_AND_ROUNDING(xres);
     CHECK_CHANGE_AND_ROUNDING(yres);
     CHECK_CHANGE_AND_ROUNDING(xres_virtual);
@@ -334,12 +336,16 @@ static void var_validate_change(const struct fb_var_screeninfo *old, int error)
     CHECK_CHANGE_AND_ROUNDING(vsync_len);
     CHECK_CHANGE(sync);
     CHECK_CHANGE(vmode);
-    CHECK_CHANGE(reserved[0]);
-    CHECK_CHANGE(reserved[1]);
-    CHECK_CHANGE(reserved[2]);
-    CHECK_CHANGE(reserved[3]);
-    CHECK_CHANGE(reserved[4]);
-    CHECK_CHANGE(reserved[5]);
+    CHECK_CHANGE(rotate);
+    for (i = 0; i < sizeof(fb_var.reserved)/sizeof(fb_var.reserved[0]); i++)
+	if (fb_var.reserved[i] != old->reserved[i]) {
+	    if (error == -1)
+		Error("reserved[%u] changed from %u to %u\n", i,
+		      old->reserved[i], fb_var.reserved[i]);
+	    else
+		Warning("reserved[%u] changed from %u to %u\n", i,
+			old->reserved[i], fb_var.reserved[i]);
+	}
 
     var_validate();
 }
