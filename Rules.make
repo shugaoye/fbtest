@@ -11,18 +11,17 @@ SRCS += $(wildcard *.c)
 OBJS += $(subst .c,.o,$(SRCS))
 HDRS += $(wildcard *.h)
 HDRS += $(wildcard $(TOPDIR)/include/*.h)
+SUBDIRS_CLEAN += $(addsuffix _clean_,$(SUBDIRS))
 
-.PHONY:		all all_rec clean clean_rec
+.PHONY:		all clean $(SUBDIRS) $(SUBDIRS_CLEAN)
 
 
-all:		.depend all_rec $(TARGET) $(A_TARGET) $(HOST_TARGET)
+all:		.depend $(TARGET) $(A_TARGET) $(HOST_TARGET)
 
-all_rec:
-ifdef SUBDIRS
-		for i in $(SUBDIRS); do make -C $$i all; done
-endif
+$(SUBDIRS):
+		$(MAKE) -C $@
 
-$(TARGET):	$(OBJS)
+$(TARGET):	$(OBJS) $(SUBDIRS)
 		$(CC) -o $(TARGET) $(filter $(OBJS), $^) $(LIBS)
 
 $(A_TARGET):	$(OBJS)
@@ -32,13 +31,11 @@ $(HOST_TARGET):	$(SRCS)
 		$(HOSTCC) -o $(HOST_TARGET) $(CFLAGS) $(SRCS) $(LIBS)
 
 
-clean::		clean_rec
+clean::		$(SUBDIRS_CLEAN)
 		$(RM) $(TARGET) $(A_TARGET) $(HOST_TARGET) $(OBJS) .depend
 
-clean_rec:
-ifdef SUBDIRS
-		for i in $(SUBDIRS); do make -C $$i clean; done
-endif
+$(SUBDIRS_CLEAN):
+		$(MAKE) -C $(subst _clean_,,$@) clean
 
 
 %.o:		%.c
@@ -46,14 +43,15 @@ endif
 
 
 ifeq ($(HOST_TARGET),)
-.depend:	$(SRCS) $(HDRS)
-		$(CC) -M $(CFLAGS) $(SRCS) > .depend
+DEPCC = $(CC)
 else
-.depend:	$(SRCS) $(HDRS)
-		$(HOSTCC) -M $(CFLAGS) $(SRCS) > .depend
+DEPCC = $(HOSTCC)
 endif
 
-ifneq ($(wildcard .depend),)
-include .depend
+.depend:	$(SRCS) $(HDRS)
+		$(DEPCC) -M $(CFLAGS) $(SRCS) > .depend
+
+ifneq ($(MAKECMDGOALS),clean)
+-include .depend
 endif
 
