@@ -10,3 +10,5 @@ LIBS += tests/tests.a drawops/drawops.a fonts/fonts.a images/images.a \
 
 include $(TOPDIR)/Rules.make
 
+images:	pnmtohex
+
