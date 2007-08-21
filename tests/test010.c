@@ -42,7 +42,7 @@ static enum test_res test010_func(void)
 const struct test test010 = {
     .name =		"test010",
     .desc =		"Hello world",
-    .visual =		VISUAL_PSEUDOCOLOR,
+    .visual =		VISUAL_GENERIC,
     .reqs =		REQF_num_colors,
     .num_colors =	16,
     .func =		test010_func,

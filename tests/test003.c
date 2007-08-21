@@ -40,7 +40,7 @@ static enum test_res test003_func(void)
 const struct test test003 = {
     .name =		"test003",
     .desc =		"Draw the 16 Linux console colors",
-    .visual =		VISUAL_PSEUDOCOLOR,
+    .visual =		VISUAL_GENERIC,
     .reqs =		REQF_num_colors,
     .num_colors =	16,
     .func =		test003_func,

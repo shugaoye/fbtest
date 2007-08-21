@@ -46,7 +46,7 @@ static enum test_res test005_func(void)
 const struct test test005 = {
     .name =	"test005",
     .desc =	"Draw the default color palette",
-    .visual =	VISUAL_PSEUDOCOLOR,
+    .visual =	VISUAL_GENERIC,
     .func =	test005_func,
 };
 
