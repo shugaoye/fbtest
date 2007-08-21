@@ -15,8 +15,12 @@
 #include "visual.h"
 #include "visops.h"
 #include "fb.h"
+#include "clut.h"
 #include "color.h"
 #include "util.h"
+
+
+static pixel_t *truecolor_idx_pixel;
 
 
 #define CREATE_COMPONENT_TABLE(tn, cn)					\
@@ -56,6 +60,13 @@ void truecolor_create_tables(void)
     /* Monochrome */
     black_pixel = rgb_pixel(0, 0, 0);
     white_pixel = rgb_pixel(red_len-1, green_len-1, blue_len-1);
+
+    /* Pseudocolor emulation */
+    idx_bits = min(red_bits+green_bits+blue_bits, 9);
+    idx_len = 1<<idx_bits;
+    idx_pixel = truecolor_idx_pixel = malloc(idx_len*sizeof(pixel_t));
+    clut = malloc(idx_len*sizeof(rgba_t));
+    clut_init_nice();
 }
 
 #undef CREATE_COMPONENT_TABLE
@@ -103,6 +114,24 @@ static int truecolor_set_visual(enum visual_id id)
 
 
     /*
+     *  Update idx_pixel[] from the CLUT
+     */
+
+static void truecolor_update_cmap(void)
+{
+    u32 i, r, g, b, a;
+
+    for (i = 0; i < idx_len; i++) {
+	r = COMPRESS_FROM_16BIT(clut[i].r, red_len-1);
+	g = COMPRESS_FROM_16BIT(clut[i].g, green_len-1);
+	b = COMPRESS_FROM_16BIT(clut[i].b, blue_len-1);
+	a = COMPRESS_FROM_16BIT(clut[i].a, alpha_len-1);
+	truecolor_idx_pixel[i] = rgba_pixel(r, g, b, a);
+    }
+}
+
+
+    /*
      *  Generic mode
      */
 
@@ -134,6 +163,7 @@ const struct visops truecolor_visops = {
     .name =		"truecolor",
     .init =		truecolor_init,
     .set_visual =	truecolor_set_visual,
+    .update_cmap =	truecolor_update_cmap,
     .match_color =	truecolor_match_color,
 };
 
