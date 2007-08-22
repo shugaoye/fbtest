@@ -25,6 +25,7 @@ extern int fb_get_var(void);
 extern int fb_set_var(void);
 extern int fb_get_cmap(void);
 extern int fb_set_cmap(void);
+extern int fb_pan(u32 xoffset, u32 yoffset);
 extern void fb_map(void);
 extern void fb_unmap(void);
 

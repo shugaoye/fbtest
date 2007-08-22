@@ -174,6 +174,28 @@ int fb_set_cmap(void)
 
 
     /*
+     *  Pan the display
+     */
+
+int fb_pan(u32 xoffset, u32 yoffset)
+{
+    struct fb_var_screeninfo var;
+    int error;
+
+    Debug("fb_pan(%u, %u)\n", xoffset, yoffset);
+    fb_var.xoffset = xoffset;
+    fb_var.yoffset = yoffset;
+    var = fb_var;
+    error = ioctl(fb_fd, FBIOPAN_DISPLAY, &fb_var);
+    var_validate_change(&var, error);
+    if (error == -1) {
+	Fatal("ioctl FBIOPAN_DISPLAY: %s\n", strerror(errno));
+    }
+    return 1;
+}
+
+
+    /*
      *  Map the frame buffer
      */
 
@@ -413,10 +435,12 @@ void fb_init(void)
     fb_open();
     fb_get_var();
     saved_var = fb_var;
-    if (fb_var.xoffset || fb_var.yoffset || fb_var.accel_flags) {
+    if (fb_var.xoffset || fb_var.yoffset || fb_var.accel_flags ||
+	fb_var.vmode & FB_VMODE_YWRAP) {
 	fb_var.xoffset = 0;
 	fb_var.yoffset = 0;
 	fb_var.accel_flags = 0;
+	fb_var.vmode &= ~FB_VMODE_YWRAP;
 	fb_set_var();
     }
     fb_get_fix();
