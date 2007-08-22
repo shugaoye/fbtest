@@ -23,6 +23,8 @@ enum test_reqflags {
     /* Screen dimensions */
     REQF_xres = (1<<6),
     REQF_yres = (1<<7),
+    /* Virtual screen and panning */
+    REQF_panning = (1<<8),
 };
 
 enum test_res {

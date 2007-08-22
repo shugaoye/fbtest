@@ -66,6 +66,13 @@ static void run_one_test(const struct test *test)
     TEST_REQ_MIN(transp_length, fb_var.transp.length);
     TEST_REQ_MIN(xres, fb_var.xres);
     TEST_REQ_MIN(yres, fb_var.yres);
+    if (test->reqs & REQF_panning) {
+	if (!(fb_fix.xpanstep && fb_var.xres_virtual-fb_var.xres) &&
+	    !(fb_fix.ypanstep && fb_var.yres_virtual-fb_var.yres)) {
+	    Debug("No support for virtual screen and panning\n");
+	    return;
+	}
+    }
 
     res = test->func();
     switch (res) {
