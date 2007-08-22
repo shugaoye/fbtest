@@ -30,6 +30,7 @@ static const struct test *all_tests[] = {
     &test008,
     &test009,
     &test010,
+    &test011,
     NULL
 };
 
