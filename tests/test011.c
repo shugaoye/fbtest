@@ -65,21 +65,27 @@ static int linegen_next(struct linegen *gen, u32 *x, u32 *y)
 	if (gen->x1 == gen->x2)
 	    return 0;
 
-	gen->e += gen->dy;
-	if (gen->e >= 0) {
-	    gen->y1 += gen->sy;
-	    gen->e -= gen->dx;
+	if (gen->dy) {
+	    gen->e += gen->dy;
+	    if (gen->e >= 0) {
+		gen->y1 += gen->sy;
+		gen->e -= gen->dx;
+	    }
 	}
+
 	gen->x1 += gen->sx;
     } else {
 	if (gen->y1 == gen->y2)
 	    return 0;
 
-	gen->e += gen->dx;
-	if (gen->e >= 0) {
-	    gen->x1 += gen->sx;
-	    gen->e -= gen->dy;
+	if (gen->dx) {
+	    gen->e += gen->dx;
+	    if (gen->e >= 0) {
+		gen->x1 += gen->sx;
+		gen->e -= gen->dy;
+	    }
 	}
+
 	gen->y1 += gen->sy;
     }
     *x = gen->x1;
