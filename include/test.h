@@ -65,6 +65,7 @@ extern const struct test test008;
 extern const struct test test009;
 extern const struct test test010;
 extern const struct test test011;
+extern const struct test test012;
 
 
     /*

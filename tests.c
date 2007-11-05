@@ -31,6 +31,7 @@ static const struct test *all_tests[] = {
     &test009,
     &test010,
     &test011,
+    &test012,
     NULL
 };
 
