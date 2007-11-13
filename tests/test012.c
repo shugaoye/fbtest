@@ -9,9 +9,10 @@
  *  more details.
  */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/times.h>
+#include <sys/time.h>
 #include <unistd.h>
 
 #include "types.h"
@@ -25,12 +26,12 @@
 static u32 sizes[] = { 10, 20, 50, 100, 200, 500, 1000 };
 
 
-static clock_t get_jiffies(void)
+static uint64_t get_ticks(void)
 {
-    struct tms tms;
+    struct timeval tv;
 
-    times(&tms);
-    return tms.tms_utime;
+    gettimeofday(&tv, NULL);
+    return (uint64_t)tv.tv_sec*1000000 + tv.tv_usec;
 }
 
 static void draw_squares(u32 xrange, u32 yrange, u32 size, pixel_t pixelmask,
@@ -45,8 +46,7 @@ static void benchmark_squares(u32 size)
 {
     u32 xr, yr;
     pixel_t pm;
-    long hz = sysconf(_SC_CLK_TCK);
-    clock_t ticks;
+    uint64_t ticks;
     double rate;
     unsigned long n = 1;
 
@@ -56,10 +56,10 @@ static void benchmark_squares(u32 size)
 
     printf("Benchmarking... ");
     while (n <<= 1) {
-	ticks = get_jiffies();
+	ticks = get_ticks();
 	draw_squares(xr, yr, size, pm, n);
-	ticks = get_jiffies() - ticks;
-	if (ticks >= hz/2)
+	ticks = get_ticks() - ticks;
+	if (ticks >= 500000)
 	    break;
     }
     if (!n) {
@@ -67,7 +67,7 @@ static void benchmark_squares(u32 size)
 	return;
     }
 
-    rate = (double)n*hz*size*size/(ticks*1e6);
+    rate = (double)n*size*size/ticks;
 
     printf("%ux%u squares: %f Mpixels/s\n", size, size, rate);
 }
