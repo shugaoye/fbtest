@@ -47,8 +47,8 @@ extern struct drawops drawops;
     drawops.draw_rect((x), (y), (width), (height), (pixel))
 #define fill_rect(x, y, width, height, pixel)	\
     drawops.fill_rect((x), (y), (width), (height), (pixel))
-#define draw_line(x1, y1, x2, y2)	\
-    drawops.draw_line((x), (y), (x2), (y2))
+#define draw_line(x1, y1, x2, y2, pixel)	\
+    drawops.draw_line((x1), (y1), (x2), (y2), (pixel))
 #define expand_bitmap(x, y, width, height, data, pitch, pixel0, pixel1)	\
     drawops.expand_bitmap((x), (y), (width), (height), (data), (pitch),	\
 			  (pixel0), (pixel1))
