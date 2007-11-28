@@ -47,8 +47,8 @@ static void benchmark_squares(u32 size)
     double rate;
     unsigned long n = 1;
 
-    xr = fb_var.xres-size+1;
-    yr = fb_var.yres-size+1;
+    xr = fb_var.xres_virtual-size+1;
+    yr = fb_var.yres_virtual-size+1;
     pm = (1ULL << fb_var.bits_per_pixel)-1;
 
     printf("Benchmarking... ");
@@ -78,7 +78,7 @@ static enum test_res test012_func(void)
     while (1)
 	for (i = 0; i < sizeof(sizes)/sizeof(*sizes); i++) {
 	    size = sizes[i];
-	    if (size >= fb_var.xres || size >= fb_var.yres)
+	    if (size > fb_var.xres_virtual || size > fb_var.yres_virtual)
 		break;
 	    benchmark_squares(size);
 	    sizes[i] *= 10;
