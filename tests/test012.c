@@ -79,11 +79,12 @@ static enum test_res test012_func(void)
 	for (i = 0; i < sizeof(sizes)/sizeof(*sizes); i++) {
 	    size = sizes[i];
 	    if (size > fb_var.xres_virtual || size > fb_var.yres_virtual)
-		break;
+		goto out;
 	    benchmark_squares(size);
 	    sizes[i] *= 10;
 	}
 
+out:
     wait_for_key(10);
     return TEST_OK;
 }
