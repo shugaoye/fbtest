@@ -23,9 +23,6 @@
 #include "util.h"
 
 
-static u32 sizes[] = { 10, 20, 50, 100, 200, 500, 1000 };
-
-
 static uint64_t get_ticks(void)
 {
     struct timeval tv;
@@ -75,14 +72,17 @@ static void benchmark_squares(u32 size)
 static enum test_res test012_func(void)
 {
     unsigned int i;
+    u32 sizes[3] = { 10, 20, 50 };
     u32 size;
 
-    for (i = 0; i < sizeof(sizes)/sizeof(*sizes); i++) {
-	size = sizes[i];
-	if (size >= fb_var.xres || size >= fb_var.yres)
-	    break;
-	benchmark_squares(size);
-    }
+    while (1)
+	for (i = 0; i < sizeof(sizes)/sizeof(*sizes); i++) {
+	    size = sizes[i];
+	    if (size >= fb_var.xres || size >= fb_var.yres)
+		break;
+	    benchmark_squares(size);
+	    sizes[i] *= 10;
+	}
 
     wait_for_key(10);
     return TEST_OK;
