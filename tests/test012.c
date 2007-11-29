@@ -9,11 +9,8 @@
  *  more details.
  */
 
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
-#include <unistd.h>
 
 #include "types.h"
 #include "fb.h"
@@ -23,50 +20,37 @@
 #include "util.h"
 
 
-static uint64_t get_ticks(void)
-{
-    struct timeval tv;
+struct param {
+    u32 xrange;
+    u32 yrange;
+    u32 size;
+    pixel_t pixelmask;
+};
 
-    gettimeofday(&tv, NULL);
-    return (uint64_t)tv.tv_sec*1000000 + tv.tv_usec;
-}
-
-static void draw_squares(u32 xrange, u32 yrange, u32 size, pixel_t pixelmask,
-			 unsigned long n)
+static void fill_squares(unsigned long n, void *data)
 {
+    struct param *param = data;
+
     while (n--)
-	fill_rect(lrand48() % xrange, lrand48() % yrange, size, size,
-		  lrand48() & pixelmask);
+	fill_rect(lrand48() % param->xrange, lrand48() % param->yrange,
+		  param->size, param->size, lrand48() & param->pixelmask);
 }
 
 static void benchmark_squares(u32 size)
 {
-    u32 xr, yr;
-    pixel_t pm;
-    uint64_t ticks;
+    struct param param;
     double rate;
-    unsigned long n = 1;
 
-    xr = fb_var.xres_virtual-size+1;
-    yr = fb_var.yres_virtual-size+1;
-    pm = (1ULL << fb_var.bits_per_pixel)-1;
+    param.xrange = fb_var.xres_virtual-size+1;
+    param.yrange = fb_var.yres_virtual-size+1;
+    param.size = size;
+    param.pixelmask = (1ULL << fb_var.bits_per_pixel)-1;
 
-    printf("Benchmarking... ");
-    while (n <<= 1) {
-	ticks = get_ticks();
-	draw_squares(xr, yr, size, pm, n);
-	ticks = get_ticks() - ticks;
-	if (ticks >= 500000)
-	    break;
-    }
-    if (!n) {
-	printf("CPU too fast :-)\n");
+    rate = benchmark(fill_squares, &param);
+    if (rate < 0)
 	return;
-    }
 
-    rate = (double)n*size*size/ticks;
-
-    printf("%ux%u squares: %f Mpixels/s\n", size, size, rate);
+    printf("%ux%u squares: %.2f Mpixels/s\n", size, size, rate*size*size/1e6);
 }
 
 static enum test_res test012_func(void)

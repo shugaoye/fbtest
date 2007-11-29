@@ -2,7 +2,7 @@
 /*
  *  Utility definitions and routines
  *
- *  (C) Copyright 2001-2003 Geert Uytterhoeven
+ *  (C) Copyright 2001-2007 Geert Uytterhoeven
  *
  *  This file is subject to the terms and conditions of the GNU General Public
  *  License. See the file COPYING in the main directory of this archive for
@@ -72,6 +72,13 @@ extern void Debug(const char *fmt, ...)
 
 extern void wait_for_key(int timeout);
 extern void wait_ms(int ms);
+
+
+    /*
+     *  Benchmarking
+     */
+
+extern double benchmark(void (*func)(unsigned long n, void *data), void *data);
 
 
     /*

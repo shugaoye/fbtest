@@ -2,7 +2,7 @@
 /*
  *  Utility routines
  *
- *  (C) Copyright 2001-2003 Geert Uytterhoeven
+ *  (C) Copyright 2001-2007 Geert Uytterhoeven
  *
  *  This file is subject to the terms and conditions of the GNU General Public
  *  License. See the file COPYING in the main directory of this archive for
@@ -10,10 +10,13 @@
  */
 
 #include <stdarg.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+
+#include <sys/time.h>
 
 #include "types.h"
 #include "fb.h"
@@ -138,5 +141,39 @@ void wait_ms(int ms)
     req.tv_sec = ms/1000;
     req.tv_nsec = (ms % 1000)*1000000;
     nanosleep(&req, NULL);
+}
+
+
+    /*
+     *  Benchmark a routine
+     */
+
+static uint64_t get_ticks(void)
+{
+    struct timeval tv;
+
+    gettimeofday(&tv, NULL);
+    return (uint64_t)tv.tv_sec*1000000 + tv.tv_usec;
+}
+
+double benchmark(void (*func)(unsigned long n, void *data), void *data)
+{
+    uint64_t ticks;
+    unsigned long n = 1;
+
+    printf("Benchmarking... ");
+    while (n <<= 1) {
+	ticks = get_ticks();
+	func(n, data);
+	ticks = get_ticks() - ticks;
+	if (ticks >= 500000)
+	    break;
+    }
+    if (!n) {
+	printf("CPU too fast :-)\n");
+	return -1;
+    }
+
+    return 1e6*n/ticks;
 }
 
