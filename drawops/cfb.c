@@ -41,7 +41,7 @@ int cfb_init(void)
 
     next_line =
 	fb_fix.line_length ? fb_fix.line_length
-			   : fb_var.xres_virtual*8/fb_var.bits_per_pixel;
+			   : fb_var.xres_virtual*fb_var.bits_per_pixel/8;
     return 1;
 }
 
