@@ -46,7 +46,7 @@ extern void Debug(const char *fmt, ...)
 
 
     /*
-     *  Minimum and maximum
+     *  Minimum, maximum, and absolute value
      */
 
 #undef min
@@ -63,6 +63,13 @@ extern void Debug(const char *fmt, ...)
         typeof(a) _a = (a);	\
 	typeof(a) _b = (b);	\
 	_a > _b ? _a : _b;	\
+    } )
+
+#undef abs
+#define abs(x)			\
+    ( {				\
+        typeof(x) _x = (x);	\
+	_x >= 0 ? _x : -_x;	\
     } )
 
 
