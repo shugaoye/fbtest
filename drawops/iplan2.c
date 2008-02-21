@@ -32,7 +32,7 @@ static int iplan2_init(void)
 
 static void iplan2_setpixel(u32 x, u32 y, pixel_t pixel)
 {
-    u16 *p = (u16 *)(screen+y*next_line+fb_var.bits_per_pixel*(x & -16));
+    u16 *p = (u16 *)(screen+y*next_line+fb_var.bits_per_pixel*(x/16*2));
     u16 mask = 0x8000 >> (x & 15);
     int i = fb_var.bits_per_pixel;
     while (1) {
@@ -49,7 +49,7 @@ static void iplan2_setpixel(u32 x, u32 y, pixel_t pixel)
 static pixel_t iplan2_getpixel(u32 x, u32 y)
 {
     pixel_t pixel = 0, bit = 1;
-    u16 *p = (u16 *)(screen+y*next_line+fb_var.bits_per_pixel*(x & -16));
+    u16 *p = (u16 *)(screen+y*next_line+fb_var.bits_per_pixel*(x/16*2));
     u16 mask = 0x8000 >> (x & 15);
     int i = fb_var.bits_per_pixel;
     while (1) {
