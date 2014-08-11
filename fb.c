@@ -19,8 +19,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <asm/page.h>
-
 #include "types.h"
 #include "fb.h"
 #include "util.h"
