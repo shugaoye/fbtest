@@ -22,7 +22,7 @@
 #include "visops.h"
 #include "test.h"
 
-#define DEFAULT_FBDEV	"/dev/fb0"
+#define DEFAULT_FBDEV	"/dev/graphics/fb0"
 
 
 const char *ProgramName;

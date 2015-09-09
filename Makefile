@@ -1,7 +1,7 @@
 
 TOPDIR = .
 
-TARGET = $(CROSS_COMPILE)fbtest
+TARGET = fbtest
 
 SUBDIRS = drawops pnmtohex fonts images visops tests
 

@@ -1,11 +1,60 @@
+# Paths and settings
+TARGET_PRODUCT = x86
+ANDROID_ROOT   = /home/android/aosp/android-x86
+BIONIC_LIBC    = $(ANDROID_ROOT)/bionic/libc
+PRODUCT_OUT    = $(ANDROID_ROOT)/out/target/product/$(TARGET_PRODUCT)
+CROSS_COMPILE  = \
+    $(ANDROID_ROOT)/prebuilts/gcc/linux-x86/x86/i686-linux-android-4.7/bin/i686-linux-android-
+# prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-
+ARCH_NAME = x86
 
-CC = $(CROSS_COMPILE)gcc
-HOSTCC = gcc
+# Tool names
+AS            = $(CROSS_COMPILE)as
+AR            = $(CROSS_COMPILE)ar
+CC            = $(CROSS_COMPILE)gcc
+CPP           = $(CC) -E
+LD            = $(CROSS_COMPILE)ld
+NM            = $(CROSS_COMPILE)nm
+OBJCOPY       = $(CROSS_COMPILE)objcopy
+OBJDUMP       = $(CROSS_COMPILE)objdump
+RANLIB        = $(CROSS_COMPILE)ranlib
+READELF       = $(CROSS_COMPILE)readelf
+SIZE          = $(CROSS_COMPILE)size
+STRINGS       = $(CROSS_COMPILE)strings
+STRIP         = $(CROSS_COMPILE)strip
 
+export AS AR CC CPP LD NM OBJCOPY OBJDUMP RANLIB READELF \
+         SIZE STRINGS STRIP
+
+# Build settings
 IFLAGS = -I$(TOPDIR)/include
 #DFLAGS = -g
-OFLAGS = -O3 -fomit-frame-pointer
-CFLAGS = -Wall -Werror $(IFLAGS) $(DFLAGS) $(OFLAGS)
+OFLAGS = -O2
+CFLAGS = -Wall -fno-short-enums $(IFLAGS) $(DFLAGS) $(OFLAGS)
+
+HEADER_OPS    = -I$(BIONIC_LIBC)/arch-$(ARCH_NAME)/include \
+                -I$(BIONIC_LIBC)/include \
+                -I$(BIONIC_LIBC)/kernel/common \
+                -I$(BIONIC_LIBC)/kernel/arch-$(ARCH_NAME)
+LDFLAGS       = -nostdlib -Wl,-dynamic-linker,/system/bin/linker \
+                $(PRODUCT_OUT)/obj/lib/crtbegin_dynamic.o \
+                $(PRODUCT_OUT)/obj/lib/crtend_android.o \
+                -L$(PRODUCT_OUT)/obj/lib -lc -ldl
+
+# Installation variables
+EXEC_NAME     = $(TARGET)
+INSTALL       = install
+INSTALL_DIR   = $(PRODUCT_OUT)/system/bin
+
+# Make rules
+
+# install: $(EXEC_NAME)
+#	test -d $(INSTALL_DIR) || $(INSTALL) -d -m 755 $(INSTALL_DIR)
+#	$(INSTALL) -m 755 $(EXEC_NAME) $(INSTALL_DIR)
+
+
+#-------------------------------------------------------------------------
+HOSTCC = gcc
 
 SRCS += $(wildcard *.c)
 OBJS += $(subst .c,.o,$(SRCS))
@@ -22,7 +71,7 @@ $(SUBDIRS):
 		$(MAKE) -C $@
 
 $(TARGET):	$(OBJS) $(SUBDIRS)
-		$(CC) -o $(TARGET) $(filter $(OBJS), $^) $(LIBS)
+		$(CC) -o $(TARGET) $(HEADER_OPS) $(filter $(OBJS), $^) $(LIBS)  $(LDFLAGS)
 
 $(A_TARGET):	$(OBJS)
 		$(AR) -rcs $(A_TARGET) $(OBJS)
@@ -39,7 +88,7 @@ $(SUBDIRS_CLEAN):
 
 
 %.o:		%.c
-		$(CC) -c $(CFLAGS) -o $@ $<
+		$(CC) -c $(CFLAGS) $(HEADER_OPS) -o $@ $<
 
 
 ifeq ($(HOST_TARGET),)
@@ -49,7 +98,7 @@ DEPCC = $(HOSTCC)
 endif
 
 .depend:	$(SRCS) $(HDRS)
-		$(DEPCC) -M $(CFLAGS) $(SRCS) > .depend
+		$(DEPCC) -M $(CFLAGS) $(HEADER_OPS) $(SRCS) > .depend
 
 ifneq ($(MAKECMDGOALS),clean)
 -include .depend
