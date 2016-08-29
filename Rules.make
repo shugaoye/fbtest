@@ -30,7 +30,7 @@ export AS AR CC CPP LD NM OBJCOPY OBJDUMP RANLIB READELF \
 IFLAGS = -I$(TOPDIR)/include
 #DFLAGS = -g
 OFLAGS = -O2
-CFLAGS = -Wall -fno-short-enums $(IFLAGS) $(DFLAGS) $(OFLAGS)
+CFLAGS = -Wall -fno-short-enums $(IFLAGS) $(DFLAGS) $(OFLAGS) -m32
 
 HEADER_OPS    = -I$(BIONIC_LIBC)/arch-$(ARCH_NAME)/include \
                 -I$(BIONIC_LIBC)/include \
@@ -54,7 +54,7 @@ INSTALL_DIR   = $(PRODUCT_OUT)/system/bin
 
 
 #-------------------------------------------------------------------------
-HOSTCC = gcc
+HOSTCC = $(CROSS_COMPILE)gcc
 
 SRCS += $(wildcard *.c)
 OBJS += $(subst .c,.o,$(SRCS))
