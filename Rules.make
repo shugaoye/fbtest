@@ -1,11 +1,11 @@
 # Paths and settings
-TARGET_PRODUCT = x86
-ANDROID_ROOT   = /home/android/aosp/android-x86
+TARGET_PRODUCT = x86vbox
+ANDROID_ROOT   = /home/aosp/src/android-6
 BIONIC_LIBC    = $(ANDROID_ROOT)/bionic/libc
 PRODUCT_OUT    = $(ANDROID_ROOT)/out/target/product/$(TARGET_PRODUCT)
 CROSS_COMPILE  = \
-    $(ANDROID_ROOT)/prebuilts/gcc/linux-x86/x86/i686-linux-android-4.7/bin/i686-linux-android-
-# prebuilt/linux-x86/toolchain/arm-eabi-4.4.3/bin/arm-eabi-
+    $(ANDROID_ROOT)/prebuilts/gcc/linux-x86/x86/x86_64-linux-android-4.9/bin/x86_64-linux-android-
+
 ARCH_NAME = x86
 
 # Tool names
@@ -34,8 +34,8 @@ CFLAGS = -Wall -fno-short-enums $(IFLAGS) $(DFLAGS) $(OFLAGS)
 
 HEADER_OPS    = -I$(BIONIC_LIBC)/arch-$(ARCH_NAME)/include \
                 -I$(BIONIC_LIBC)/include \
-                -I$(BIONIC_LIBC)/kernel/common \
-                -I$(BIONIC_LIBC)/kernel/arch-$(ARCH_NAME)
+                -I$(BIONIC_LIBC)/kernel/uapi \
+                -I$(BIONIC_LIBC)/kernel/uapi/asm-$(ARCH_NAME)
 LDFLAGS       = -nostdlib -Wl,-dynamic-linker,/system/bin/linker \
                 $(PRODUCT_OUT)/obj/lib/crtbegin_dynamic.o \
                 $(PRODUCT_OUT)/obj/lib/crtend_android.o \
