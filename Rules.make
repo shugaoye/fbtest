@@ -1,6 +1,6 @@
 # Paths and settings
-TARGET_PRODUCT = x86
-ANDROID_ROOT   = /home/roger/src/android-x86
+TARGET_PRODUCT = x86vbox
+ANDROID_ROOT   = $(OUT)/../../../..
 BIONIC_LIBC    = $(ANDROID_ROOT)/bionic/libc
 PRODUCT_OUT    = $(ANDROID_ROOT)/out/target/product/$(TARGET_PRODUCT)
 CROSS_COMPILE  = \
@@ -27,7 +27,7 @@ export AS AR CC CPP LD NM OBJCOPY OBJDUMP RANLIB READELF \
          SIZE STRINGS STRIP
 
 # Build settings
-IFLAGS = -I$(TOPDIR)/include
+IFLAGS = -I$(TOPDIR)/include -I$(TOPDIR)/include/netpbm
 #DFLAGS = -g
 OFLAGS = -O2
 CFLAGS = -Wall -fno-short-enums $(IFLAGS) $(DFLAGS) $(OFLAGS) -m32 -fPIE
