@@ -1,6 +1,6 @@
 # Paths and settings
-TARGET_PRODUCT = x86vbox
-ANDROID_ROOT   = /home/aosp/src/android-6
+TARGET_PRODUCT = x86
+ANDROID_ROOT   = /home/roger/src/android-x86
 BIONIC_LIBC    = $(ANDROID_ROOT)/bionic/libc
 PRODUCT_OUT    = $(ANDROID_ROOT)/out/target/product/$(TARGET_PRODUCT)
 CROSS_COMPILE  = \
@@ -30,7 +30,7 @@ export AS AR CC CPP LD NM OBJCOPY OBJDUMP RANLIB READELF \
 IFLAGS = -I$(TOPDIR)/include
 #DFLAGS = -g
 OFLAGS = -O2
-CFLAGS = -Wall -fno-short-enums $(IFLAGS) $(DFLAGS) $(OFLAGS) -m32
+CFLAGS = -Wall -fno-short-enums $(IFLAGS) $(DFLAGS) $(OFLAGS) -m32 -fPIE
 
 HEADER_OPS    = -I$(BIONIC_LIBC)/arch-$(ARCH_NAME)/include \
                 -I$(BIONIC_LIBC)/include \
@@ -39,7 +39,7 @@ HEADER_OPS    = -I$(BIONIC_LIBC)/arch-$(ARCH_NAME)/include \
 LDFLAGS       = -nostdlib -Wl,-dynamic-linker,/system/bin/linker \
                 $(PRODUCT_OUT)/obj/lib/crtbegin_dynamic.o \
                 $(PRODUCT_OUT)/obj/lib/crtend_android.o \
-                -L$(PRODUCT_OUT)/obj/lib -lc -ldl
+                -L$(PRODUCT_OUT)/obj/lib -lc -ldl -fPIE -pie
 
 # Installation variables
 EXEC_NAME     = $(TARGET)
@@ -54,7 +54,7 @@ INSTALL_DIR   = $(PRODUCT_OUT)/system/bin
 
 
 #-------------------------------------------------------------------------
-HOSTCC = $(CROSS_COMPILE)gcc
+HOSTCC = gcc
 
 SRCS += $(wildcard *.c)
 OBJS += $(subst .c,.o,$(SRCS))
